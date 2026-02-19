@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Button btnLeft;
     [SerializeField] private Button btnRight;
 
-    [SerializeField] private List<CinemachineCamera> cctvs;
+    [SerializeField] private List<StageRoom> cctvs;
 
     int currentIndex = 0;
 
