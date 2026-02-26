@@ -1,14 +1,23 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private GameSetting gameSetting;
+
     [Header("UI")]
     [SerializeField] private Button btnLeft;
     [SerializeField] private Button btnRight;
 
+    [Header("Rooms")]
     [SerializeField] private List<StageRoom> cctvs;
+
+    [Header("Timer")]
+    [SerializeField] private GameplayTimer gameplayTimer;
 
     int currentIndex = 0;
 
@@ -18,9 +27,12 @@ public class GameManager : MonoBehaviour
         currentIndex = 0;
         ChangeCCTV();
 
-        btnLeft.onClick.AddListener(()=>Increase(1));
-        btnRight.onClick.AddListener(() => Increase(-1));
+        btnLeft.onClick.AddListener( ()=> { Increase(1); });
+        btnRight.onClick.AddListener(() => { Increase(-1); });
+
+        gameplayTimer.StartTimer(gameSetting, cctvs.Count ,cctvs.Select(room => room.StrangeCount).ToArray());
     }
+
     void Increase(int _modifier)
     {
         int change = currentIndex + _modifier;

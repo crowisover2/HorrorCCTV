@@ -11,4 +11,10 @@ public class Constant
         MISSING,
         MOVEMENT
     }
+
+    [Serializable]
+    public enum SettingStage
+    {
+        SCHOOL
+    }
 }

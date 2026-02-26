@@ -17,27 +17,29 @@ public class StrangeTrigger : MonoBehaviour
         HasBeenUsed = false;
     }
 
-    public void Activate()
+    public void Activate() => Activate(false);
+    public void Deactivate() => Activate(true);
+    private void Activate(bool _reverse)
     {
         switch (type)
         {
             case Constant.Type.MOVEMENT:
                 if (NotMoveOnce == true) return;
 
-                strangeObject.SetActive(true);
-                realObject.SetActive(false);
+                strangeObject.SetActive(!_reverse);
+                realObject.SetActive(_reverse);
                 break;
             case Constant.Type.SWAP:
-                strangeObject.SetActive(true);
-                realObject.SetActive(false);
+                strangeObject.SetActive(!_reverse);
+                realObject.SetActive(_reverse);
                 break;
             case Constant.Type.EXTRA:
-                strangeObject.SetActive(true);
+                strangeObject.SetActive(!_reverse);
                 break;
             case Constant.Type.MISSING:
-                realObject.SetActive(false);
+                realObject.SetActive(_reverse);
                 break;
         }
-        HasBeenUsed = true;
+        HasBeenUsed = !_reverse;
     }
 }
