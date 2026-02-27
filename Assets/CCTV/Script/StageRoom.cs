@@ -26,7 +26,7 @@ public class StageRoom : MonoBehaviour
         get { return kamera.Priority; }
     }
 
-    public void SpawnStrange()
+    public bool SpawnStrange()
     {
         var availableIndices = Enumerable.Range(0, ListOfStranges.Count)
                                          .Where(i => !doneIndices.Contains(i))
@@ -35,7 +35,7 @@ public class StageRoom : MonoBehaviour
         if (availableIndices.Count == 0)
         {
             Debug.LogWarning("All Stranges have been used!");
-            return;
+            return false;
         }
 
         int randomIndexInAvailable = Random.Range(0, availableIndices.Count);
@@ -43,6 +43,7 @@ public class StageRoom : MonoBehaviour
 
         doneIndices.Add(actualIndex);
         ListOfStranges[actualIndex].Activate();
+        return true;
     }
 
     public void DebugSpawnStrange()

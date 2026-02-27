@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI; 
 public class GameplayTimer : MonoBehaviour
 {
@@ -12,6 +15,8 @@ public class GameplayTimer : MonoBehaviour
     private GameSetting _data;
     private float _durationGameplay;
     private int _strangeCount;
+
+    public event Func<Task> OnSpawnTime;
 
     // Cache the Wait object to avoid GC allocations
     private readonly WaitForSeconds _oneSecondWait = new WaitForSeconds(1f);
@@ -55,6 +60,13 @@ public class GameplayTimer : MonoBehaviour
 
             // String Interpolation (C# 10+) is cleaner and highly optimized in Unity 6
             txtTime.text = $"{hours:D2}:{minutes:D2}";
+
+            if (CurrentTime < _data.DurationGrace) continue;
+
+            if (CurrentTime % _data.DurationSpawnRange == 0) {
+                var task = OnSpawnTime?.Invoke();
+                yield return new WaitUntil(() => task.IsCompleted);
+            }
         }
     }
 }

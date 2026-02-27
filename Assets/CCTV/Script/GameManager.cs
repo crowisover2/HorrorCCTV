@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.Cinemachine;
+using Assets.CCTV.Script;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,49 +11,35 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Button btnRight;
 
     [Header("Rooms")]
-    [SerializeField] private List<StageRoom> cctvs;
+    [SerializeField] private SpawnSystem spawnSystem;
 
     [Header("Timer")]
     [SerializeField] private GameplayTimer gameplayTimer;
 
-    int currentIndex = 0;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        currentIndex = 0;
-        ChangeCCTV();
-
-        btnLeft.onClick.AddListener( ()=> { Increase(1); });
-        btnRight.onClick.AddListener(() => { Increase(-1); });
-
-        gameplayTimer.StartTimer(gameSetting, cctvs.Count ,cctvs.Select(room => room.StrangeCount).ToArray());
+        InitCamera();
+        InitGameplayTimer();
     }
 
-    void Increase(int _modifier)
+    private void InitGameplayTimer()
     {
-        int change = currentIndex + _modifier;
-        if (change < 0) {
-            change = cctvs.Count - 1;
-        }
-        else if ( change >= cctvs.Count)
-        {
-            change = 0;
-        }
-        currentIndex = change;
-
-        ChangeCCTV();
+        gameplayTimer.StartTimer(gameSetting, spawnSystem.NumCam, spawnSystem.AllStrangeCountEachRoom);
     }
 
-    void ChangeCCTV()
+    #region Camera
+    void InitCamera()
     {
-        for (int i = 0; i < cctvs.Count; i++)
-        {
-            if (currentIndex.Equals(i))
-            {
-                cctvs[i].Priority = 1;
-            }
-            else cctvs[i].Priority = 0;
-        }
+        spawnSystem.StartSpawnSystem(gameSetting);
+        btnLeft.onClick.AddListener(() => { spawnSystem.Increase(1); });
+        btnRight.onClick.AddListener(() => { spawnSystem.Increase(-1); });
+
+        gameplayTimer.OnSpawnTime += spawnSystem.DoSpawnWorkAsync;
+
+        spawnSystem.OnActive = ()=> gameplayTimer.OnSpawnTime += spawnSystem.DoSpawnWorkAsync;
+        spawnSystem.OnDeactive = () => gameplayTimer.OnSpawnTime -= spawnSystem.DoSpawnWorkAsync;
     }
+
+    #endregion
 }
