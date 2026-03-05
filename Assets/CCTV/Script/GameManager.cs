@@ -37,9 +37,10 @@ public class GameManager : MonoBehaviour
 
         gameplayTimer.OnSpawnTime += spawnSystem.DoSpawnWorkAsync;
 
-        spawnSystem.OnActive = ()=> gameplayTimer.OnSpawnTime += spawnSystem.DoSpawnWorkAsync;
+        spawnSystem.OnActive = () => gameplayTimer.OnSpawnTime += spawnSystem.DoSpawnWorkAsync;
         spawnSystem.OnDeactive = () => gameplayTimer.OnSpawnTime -= spawnSystem.DoSpawnWorkAsync;
-    }
 
+        //spawnSystem.GameOver = 
+    }
     #endregion
 }

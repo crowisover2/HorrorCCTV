@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +21,8 @@ namespace Assets.CCTV.Script
 
         public UnityAction OnActive;
         public UnityAction OnDeactive;
+        public UnityAction GameOver;
+
         public int NumCam => cctvs.Count;
         public int[] AllStrangeCountEachRoom => cctvs.Select(room => room.StrangeCount).ToArray();
 
@@ -76,24 +78,21 @@ namespace Assets.CCTV.Script
                 // 3. Pick a random room from the available list
                 int choosenIndex = availableRooms[UnityEngine.Random.Range(0, availableRooms.Count)];
 
-                // 4. Try to trigger a task in that room
-                // Returns TRUE if a task was started
-                // Returns FALSE if the "PC" has no tasks left
-                bool taskWasAvailable = cctvs[choosenIndex].SpawnStrange();
+                Constant.StateSpawn taskWasAvailable = cctvs[choosenIndex].SpawnStrange();
 
-                if (taskWasAvailable)
+                if (taskWasAvailable == Constant.StateSpawn.TASK_AVAILABLE)
                 {
                     Debug.Log($"Task successfully started in Room {choosenIndex}");
-                    break; // Exit the 'while' loop because we successfully spawned something!
+                    break; 
+                }
+                else if (taskWasAvailable == Constant.StateSpawn.GAME_OVER_WARNING)
+                {
+                    GameOver?.Invoke();
                 }
                 else
                 {
-                    // The room is empty! Mark it as 'Done' so we don't pick it again
                     Debug.Log($"Room {choosenIndex} is exhausted. Marking as Done.");
                     roomStatus[choosenIndex] = true;
-
-                    // The 'while' loop will now run again, 
-                    // but 'availableRooms' will be shorter this time.
                 }
 
                 // Safety yield for Unity 6 to prevent frame spikes if many rooms are empty

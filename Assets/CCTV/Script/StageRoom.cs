@@ -26,8 +26,20 @@ public class StageRoom : MonoBehaviour
         get { return kamera.Priority; }
     }
 
-    public bool SpawnStrange()
+    public bool IsGameOver()
     {
+        // Counts items where HasBeenUsed is true AND HasBeenSolved is false
+        int count = ListOfStranges.Count(t => t != null && t.HasBeenUsed && !t.HasBeenSolved);
+        return count >= 3;
+    }
+
+    public Constant.StateSpawn SpawnStrange()
+    {
+        if (IsGameOver())
+        {
+            return Constant.StateSpawn.GAME_OVER_WARNING;
+        }
+
         var availableIndices = Enumerable.Range(0, ListOfStranges.Count)
                                          .Where(i => !doneIndices.Contains(i))
                                          .ToList();
@@ -35,7 +47,7 @@ public class StageRoom : MonoBehaviour
         if (availableIndices.Count == 0)
         {
             Debug.LogWarning("All Stranges have been used!");
-            return false;
+            return Constant.StateSpawn.TASK_AVAILABLE_NOT;
         }
 
         int randomIndexInAvailable = Random.Range(0, availableIndices.Count);
@@ -43,7 +55,7 @@ public class StageRoom : MonoBehaviour
 
         doneIndices.Add(actualIndex);
         ListOfStranges[actualIndex].Activate();
-        return true;
+        return Constant.StateSpawn.TASK_AVAILABLE;
     }
 
     public void DebugSpawnStrange()

@@ -17,4 +17,12 @@ public class Constant
     {
         SCHOOL
     }
+
+    [Serializable]
+    public enum StateSpawn
+    {
+        TASK_AVAILABLE,
+        TASK_AVAILABLE_NOT,
+        GAME_OVER_WARNING
+    }
 }
